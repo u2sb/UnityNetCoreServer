@@ -1,3 +1,14 @@
 {
-	"name": "com.u2sb.Unitynetcoreserver"
+    "name": "com.u2sb.Unitynetcoreserver",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

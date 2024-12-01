@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Text;
 using Cysharp.Threading.Tasks;
 using NetCoreServer;
@@ -14,9 +15,9 @@ public class MyTcpServer : MonoBehaviour
   private void Start()
   {
     _tcpServer = new SbTcpServer("127.0.0.1", 3567);
-    _tcpServer.OnReceivedData += (guid, buffer, offset, size) =>
+    _tcpServer.OnReceivedData += (buffer, guid) =>
     {
-      var s = Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
+      var s = Encoding.UTF8.GetString(buffer);
       UniTask.Post(() => { text.text = $"Received data from {guid} \r\n {s}"; });
     };
 
@@ -34,7 +35,7 @@ public class MyTcpServer : MonoBehaviour
 
 public class SbTcpServer : TcpServer
 {
-  public Action<Guid, byte[], long, long> OnReceivedData;
+  public ReadOnlySpanAction<byte, Guid> OnReceivedData;
 
   public SbTcpServer(string address, int port) : base(address, port)
   {
@@ -68,7 +69,7 @@ public class SbTcpSession : TcpSession
 
   protected override void OnReceived(byte[] buffer, long offset, long size)
   {
-    _sbServer.OnReceivedData?.Invoke(Id, buffer, offset, size);
+    _sbServer.OnReceivedData?.Invoke(new ReadOnlySpan<byte>(buffer, (int)offset, (int)size), Id);
     Debug.Log(Encoding.UTF8.GetString(buffer, (int)offset, (int)size));
   }
 }
